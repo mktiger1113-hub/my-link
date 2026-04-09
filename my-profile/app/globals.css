@@ -2,25 +2,54 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  
+  /* Neo-Brutalism Palette */
+  --nb-yellow: #facc15;
+  --nb-pink: #f472b6;
+  --nb-green: #4ade80;
+  --nb-blue: #60a5fa;
+  --nb-purple: #a78bfa;
+  --nb-orange: #fb923c;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  
+  --color-nb-yellow: var(--nb-yellow);
+  --color-nb-pink: var(--nb-pink);
+  --color-nb-green: var(--nb-green);
+  --color-nb-blue: var(--nb-blue);
+  --color-nb-purple: var(--nb-purple);
+  --color-nb-orange: var(--nb-orange);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  --shadow-nb: 8px 8px 0px 0px rgba(0,0,0,1);
+  --shadow-nb-sm: 4px 4px 0px 0px rgba(0,0,0,1);
+  --shadow-nb-hover: 12px 12px 0px 0px rgba(0,0,0,1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground: #ffffff;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+.nb-card {
+  @apply border-4 border-black transition-all duration-200;
+}
+
+.nb-shadow {
+  @apply shadow-nb hover:shadow-nb-hover hover:-translate-x-1 hover:-translate-y-1 active:shadow-nb-sm active:translate-x-1 active:translate-y-1;
 }
