@@ -272,3 +272,93 @@ export async function incrementClickCount(uid: string, linkId: string): Promise<
     }
   }
 }
+
+// ----------------------------------------------------
+// Anonymous Link Operations (Firestore path: users/anonymous/links)
+// ----------------------------------------------------
+
+export async function getAnonymousLinks(): Promise<UserLink[]> {
+  if (isFirebaseConfigured && db) {
+    const linksRef = collection(db, "users", "anonymous", "links");
+    const q = query(linksRef, orderBy("createdAt", "desc"));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((docSnap) => {
+      const data = docSnap.data();
+      return {
+        id: docSnap.id,
+        title: data.title || "",
+        url: data.url || "",
+        createdAt: data.createdAt || Date.now(),
+        clickCount: data.clickCount || 0,
+      };
+    });
+  } else {
+    // Mock Mode
+    const allLinks = getMockData<Record<string, UserLink[]>>("mylink_links", {});
+    const userLinks = allLinks["anonymous"] || [];
+    return [...userLinks].sort((a, b) => b.createdAt - a.createdAt);
+  }
+}
+
+export async function addAnonymousLink(title: string, url: string): Promise<UserLink> {
+  const newLinkData = {
+    title,
+    url,
+    createdAt: Date.now(),
+    clickCount: 0,
+  };
+
+  if (isFirebaseConfigured && db) {
+    const linksRef = collection(db, "users", "anonymous", "links");
+    const docRef = await addDoc(linksRef, newLinkData);
+    return {
+      id: docRef.id,
+      ...newLinkData,
+    };
+  } else {
+    // Mock Mode
+    const allLinks = getMockData<Record<string, UserLink[]>>("mylink_links", {});
+    if (!allLinks["anonymous"]) allLinks["anonymous"] = [];
+    const newLink: UserLink = {
+      id: Math.random().toString(36).substring(2, 9),
+      ...newLinkData,
+    };
+    allLinks["anonymous"].push(newLink);
+    setMockData("mylink_links", allLinks);
+    return newLink;
+  }
+}
+
+export async function deleteAnonymousLink(linkId: string): Promise<void> {
+  if (isFirebaseConfigured && db) {
+    const linkDocRef = doc(db, "users", "anonymous", "links", linkId);
+    await deleteDoc(linkDocRef);
+  } else {
+    // Mock Mode
+    const allLinks = getMockData<Record<string, UserLink[]>>("mylink_links", {});
+    const userLinks = allLinks["anonymous"] || [];
+    const filtered = userLinks.filter((l) => l.id !== linkId);
+    allLinks["anonymous"] = filtered;
+    setMockData("mylink_links", allLinks);
+  }
+}
+
+export async function incrementAnonymousClickCount(linkId: string): Promise<void> {
+  if (isFirebaseConfigured && db) {
+    const linkDocRef = doc(db, "users", "anonymous", "links", linkId);
+    await updateDoc(linkDocRef, {
+      clickCount: increment(1),
+    });
+  } else {
+    // Mock Mode
+    const allLinks = getMockData<Record<string, UserLink[]>>("mylink_links", {});
+    const userLinks = allLinks["anonymous"] || [];
+    const linkIndex = userLinks.findIndex((l) => l.id === linkId);
+    if (linkIndex !== -1) {
+      userLinks[linkIndex].clickCount = (userLinks[linkIndex].clickCount || 0) + 1;
+      allLinks["anonymous"] = userLinks;
+      setMockData("mylink_links", allLinks);
+    }
+  }
+}
+
