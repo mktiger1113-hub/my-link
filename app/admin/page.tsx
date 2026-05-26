@@ -22,17 +22,16 @@ import {
   LogOut,
   Plus,
   Trash2,
-  Edit2,
+  Edit3,
   Check,
   X,
-  Eye,
   Globe,
   Loader2,
   AlertCircle,
-  HelpCircle,
+  Sparkles,
 } from "lucide-react";
 
-// Inline Edit Input Component
+// Premium Inline Edit Input Component
 interface InlineEditProps {
   value: string;
   onSave: (val: string) => Promise<boolean | void>;
@@ -108,7 +107,7 @@ function InlineEdit({
 
   if (isEditing) {
     return (
-      <div className="flex flex-col gap-1 w-full max-w-md">
+      <div className="flex flex-col gap-1.5 w-full max-w-md animate-in fade-in-0 duration-200">
         <div className="flex items-center gap-2">
           <input
             ref={inputRef}
@@ -119,27 +118,46 @@ function InlineEdit({
             onKeyDown={handleKeyDown}
             disabled={loading}
             placeholder={placeholder}
-            className="flex-1 px-3 py-1.5 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50"
+            className="flex-1 px-3 py-2 text-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 shadow-sm"
           />
           {loading ? (
-            <Loader2 className="h-4 w-4 animate-spin text-zinc-500" />
+            <Loader2 className="h-4 w-4 animate-spin text-zinc-500 shrink-0" />
           ) : (
-            <button onClick={handleSave} className="p-1 hover:text-green-600">
-              <Check className="h-4 w-4" />
-            </button>
+            <div className="flex gap-1 shrink-0">
+              <button 
+                onClick={handleSave} 
+                className="p-2 rounded-lg text-green-600 hover:bg-green-50 dark:hover:bg-green-950/20 transition-all cursor-pointer"
+              >
+                <Check className="h-4 w-4" />
+              </button>
+              <button 
+                onClick={() => { setInputValue(value); setIsEditing(false); setError(null); }}
+                className="p-2 rounded-lg text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
           )}
         </div>
-        {error && <span className="text-xs text-red-500 font-medium">{error}</span>}
+        {error && (
+          <span className="text-xs text-red-500 font-semibold flex items-center gap-1">
+            <AlertCircle className="h-3.5 w-3.5" />
+            {error}
+          </span>
+        )}
       </div>
     );
   }
 
   return (
-    <div className={`group flex items-center gap-2 cursor-pointer ${className}`} onClick={() => setIsEditing(true)}>
-      <span className={value ? "" : "text-zinc-400 italic"}>
+    <div 
+      className={`group flex items-center gap-3 cursor-pointer select-none transition-all duration-300 ${className}`} 
+      onClick={() => setIsEditing(true)}
+    >
+      <span className={value ? "text-zinc-900 dark:text-zinc-50 font-medium" : "text-zinc-400 italic font-normal"}>
         {value || placeholder || "입력되지 않음"}
       </span>
-      <Edit2 className="h-3.5 w-3.5 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <Edit3 className="h-3.5 w-3.5 text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0" />
     </div>
   );
 }
@@ -252,7 +270,7 @@ export default function AdminPage() {
       <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-zinc-950 dark:text-zinc-50" />
-          <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">데이터를 로드하는 중입니다...</p>
+          <p className="text-sm font-semibold text-zinc-400 dark:text-zinc-500 animate-pulse">데이터를 로드하는 중입니다...</p>
         </div>
       </div>
     );
@@ -296,7 +314,6 @@ export default function AdminPage() {
   const validateUrl = (url: string) => {
     const trimmed = url.trim();
     if (!trimmed) return "URL 주소를 입력해주세요.";
-    // Simple protocol check
     const hasProtocol = /^https?:\/\//i.test(trimmed);
     if (!hasProtocol) {
       return "올바른 URL 주소를 입력하세요 (http:// 또는 https:// 포함)";
@@ -381,15 +398,18 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 pb-20">
+    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 pb-20 overflow-hidden font-sans">
+      {/* Decorative light gradients */}
+      <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-zinc-200/40 dark:bg-zinc-900/10 blur-[100px] pointer-events-none select-none" />
+
       {/* Top Navbar */}
-      <header className="sticky top-0 z-40 w-full border-b border-zinc-200 dark:border-zinc-900 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 w-full border-b border-zinc-200/60 dark:border-zinc-900/80 bg-white/70 dark:bg-zinc-950/80 backdrop-blur-md">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-semibold text-lg">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-950 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-950">
-              <Link2 className="h-4 w-4" />
+          <div className="flex items-center gap-2.5 font-bold text-lg select-none">
+            <div className="flex h-8.5 w-8.5 items-center justify-center rounded-xl bg-zinc-950 dark:bg-zinc-50 text-zinc-50 dark:text-zinc-950 shadow-sm">
+              <Link2 className="h-4.5 w-4.5" />
             </div>
-            <span>My Link Admin</span>
+            <span className="font-heading">My Link Admin</span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -397,17 +417,17 @@ export default function AdminPage() {
               href={`/${profile.displayName}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs font-bold hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-all shadow-sm active:scale-95 bg-white dark:bg-zinc-950"
             >
-              <Globe className="h-3.5 w-3.5" />
+              <Globe className="h-3.5 w-3.5 text-zinc-500 dark:text-zinc-400" />
               <span>내 페이지 보기</span>
-              <ExternalLink className="h-3.5 w-3.5 text-zinc-400" />
+              <ExternalLink className="h-3 w-3 text-zinc-400" />
             </a>
             <Button
               onClick={logout}
               variant="ghost"
               size="icon"
-              className="rounded-lg h-9 w-9 border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-50 dark:hover:bg-zinc-900 cursor-pointer"
+              className="rounded-xl h-9.5 w-9.5 border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:text-zinc-50 dark:hover:bg-zinc-900 cursor-pointer active:scale-95 shadow-sm bg-white dark:bg-zinc-950"
             >
               <LogOut className="h-4 w-4" />
             </Button>
@@ -415,48 +435,51 @@ export default function AdminPage() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 mt-10 grid grid-cols-1 gap-10">
+      <main className="max-w-3xl mx-auto px-6 mt-12 flex flex-col gap-8 z-10 relative">
         {/* Profile Card */}
-        <section className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
-          <h2 className="text-lg font-bold mb-6 tracking-tight flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            프로필 정보 설정
-            <span className="text-xs font-normal text-zinc-400">(항목을 클릭하여 바로 편집 가능)</span>
-          </h2>
+        <section className="bg-white/50 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl p-6.5 shadow-premium">
+          <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4 mb-6">
+            <h2 className="text-base font-extrabold tracking-tight flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+              <span>프로필 설정</span>
+            </h2>
+            <span className="text-[11px] text-zinc-400 dark:text-zinc-500">각 항목을 클릭해 바로 편집해보세요.</span>
+          </div>
 
           <div className="flex flex-col gap-6">
             {/* DisplayName (Unique Slug ID) */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4 gap-2">
+            <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-100 dark:border-zinc-800/50 pb-5 gap-3">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">내 페이지 ID (주소 경로)</h3>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
-                  마이링크 개인 주소: <code className="bg-zinc-100 dark:bg-zinc-800 px-1 py-0.5 rounded text-zinc-700 dark:text-zinc-300">mylink.io/{profile.displayName}</code>
+                <h3 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">내 페이지 ID (주소 경로)</h3>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">
+                  공개 URL: <code className="bg-zinc-100 dark:bg-zinc-800/60 px-1.5 py-0.5 rounded font-semibold text-zinc-700 dark:text-zinc-300">mylink.io/{profile.displayName}</code>
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
                 {idEditing ? (
-                  <div className="flex flex-col gap-1.5 w-full md:w-80">
+                  <div className="flex flex-col gap-1.5 w-full md:w-80 animate-in fade-in-0 duration-200">
                     <div className="flex items-center gap-2">
                       <div className="relative flex-1">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-zinc-400">mylink.io/</span>
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-zinc-400 font-medium">mylink.io/</span>
                         <input
                           type="text"
                           value={idValue}
                           onChange={(e) => setIdValue(e.target.value)}
                           disabled={idLoading}
-                          className="w-full pl-[72px] pr-8 py-1.5 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50"
+                          className="w-full pl-[62px] pr-8 py-2 text-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 shadow-sm"
                           placeholder="username"
                         />
                         {idStatus === "checking" && (
-                          <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-zinc-400" />
+                          <Loader2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 animate-spin text-zinc-400" />
                         )}
                       </div>
                       <button
                         onClick={handleIdSave}
                         disabled={idStatus !== "available" || idLoading}
-                        className={`p-1.5 rounded border border-zinc-200 dark:border-zinc-800 ${
+                        className={`p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all ${
                           idStatus === "available"
-                            ? "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-green-600"
+                            ? "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-green-600 cursor-pointer"
                             : "opacity-40 cursor-not-allowed text-zinc-400"
                         }`}
                       >
@@ -470,20 +493,21 @@ export default function AdminPage() {
                           setIdError(null);
                         }}
                         disabled={idLoading}
-                        className="p-1.5 rounded border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400"
+                        className="p-2 rounded-xl border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 transition-all cursor-pointer"
                       >
                         <X className="h-4 w-4" />
                       </button>
                     </div>
 
                     {idError && (
-                      <span className="text-xs text-red-500 flex items-center gap-1 font-medium">
+                      <span className="text-[11px] text-red-500 flex items-center gap-1 font-semibold">
                         <AlertCircle className="h-3 w-3" />
                         {idError}
                       </span>
                     )}
                     {idStatus === "available" && (
-                      <span className="text-xs text-green-600 font-medium">
+                      <span className="text-[11px] text-green-600 font-semibold flex items-center gap-1">
+                        <Check className="h-3 w-3" />
                         사용 가능한 고유 ID입니다.
                       </span>
                     )}
@@ -491,40 +515,40 @@ export default function AdminPage() {
                 ) : (
                   <div
                     onClick={() => setIdEditing(true)}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800 px-3 py-1.5 rounded-lg border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 transition-all"
+                    className="flex items-center gap-2 cursor-pointer hover:bg-zinc-100/50 dark:hover:bg-zinc-800/50 px-3.5 py-1.5 rounded-xl border border-zinc-200 dark:border-zinc-800 transition-all"
                   >
-                    <span className="text-sm font-semibold">{profile.displayName}</span>
-                    <Edit2 className="h-3.5 w-3.5 text-zinc-400" />
+                    <span className="text-sm font-bold">{profile.displayName}</span>
+                    <Edit3 className="h-3.5 w-3.5 text-zinc-400" />
                   </div>
                 )}
               </div>
             </div>
 
             {/* Username (Display Name on Public Page) */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4 gap-2">
+            <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-100 dark:border-zinc-800/50 pb-5 gap-3">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">표시 이름 (Username)</h3>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">페이지 상단에 크게 표시될 실명 또는 닉네임</p>
+                <h3 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">표시 이름 (Username)</h3>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">프로필 메인 영역에 노출될 별명 또는 필명</p>
               </div>
               <InlineEdit
                 value={profile.username}
                 onSave={(val) => handleProfileSave("username", val)}
-                validate={(val) => (!val ? "이름은 비어 둘 수 없습니다." : null)}
-                className="font-medium text-sm border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-3 py-1.5 rounded-lg"
+                validate={(val) => (!val ? "이름은 필수 항목입니다." : null)}
+                className="font-bold text-sm border border-zinc-200 dark:border-zinc-800/40 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-950 px-3.5 py-2 rounded-xl shadow-sm"
               />
             </div>
 
             {/* Bio (Short Introduction) */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between pb-2 gap-2">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div>
-                <h3 className="text-sm font-semibold text-zinc-500 dark:text-zinc-400">한 줄 소개 (Bio)</h3>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">나를 한 줄로 표현해 보세요</p>
+                <h3 className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wide">한 줄 소개 (Bio)</h3>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400 mt-1">공유받은 방문자들에게 보여줄 짧은 인삿말</p>
               </div>
               <InlineEdit
                 value={profile.bio}
                 onSave={(val) => handleProfileSave("bio", val)}
-                placeholder="한 줄 소개를 입력해주세요."
-                className="text-sm text-zinc-600 dark:text-zinc-300 border border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 px-3 py-1.5 rounded-lg max-w-xs md:max-w-md text-right md:text-right"
+                placeholder="한 줄 소개를 입력해보세요."
+                className="text-sm border border-zinc-200 dark:border-zinc-800/40 hover:border-zinc-300 dark:hover:border-zinc-700 bg-white dark:bg-zinc-950 px-3.5 py-2 rounded-xl shadow-sm max-w-xs md:max-w-md"
               />
             </div>
           </div>
@@ -539,39 +563,39 @@ export default function AdminPage() {
             setNewTitle("");
             setNewUrl("");
           }}
-          title="새 링크 추가"
+          title="새 링크 등록"
         >
-          <form onSubmit={handleAddLink} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">링크 제목</label>
+          <form onSubmit={handleAddLink} className="flex flex-col gap-5">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase">링크 이름</label>
               <input
                 type="text"
                 value={newTitle}
                 onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="예: 깃허브 저장소, 개인 블로그"
-                className="px-3 py-2 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 text-zinc-900 dark:text-zinc-50"
+                placeholder="예: 개인 포트폴리오, 링크드인"
+                className="px-3.5 py-2.5 text-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 shadow-sm text-zinc-900 dark:text-zinc-50 font-medium"
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">URL 주소</label>
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold text-zinc-400 dark:text-zinc-500 uppercase">URL 주소</label>
               <input
                 type="text"
                 value={newUrl}
                 onChange={(e) => setNewUrl(e.target.value)}
                 placeholder="https://example.com"
-                className="px-3 py-2 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 text-zinc-900 dark:text-zinc-50"
+                className="px-3.5 py-2.5 text-sm bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 shadow-sm text-zinc-900 dark:text-zinc-50 font-mono"
               />
             </div>
 
             {addError && (
-              <p className="text-xs text-red-500 flex items-center gap-1.5 font-medium">
+              <p className="text-xs text-red-500 flex items-center gap-1.5 font-semibold">
                 <AlertCircle className="h-3.5 w-3.5" />
                 {addError}
               </p>
             )}
 
-            <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="flex justify-end gap-2.5 mt-2 pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
               <Button
                 type="button"
                 variant="ghost"
@@ -581,36 +605,36 @@ export default function AdminPage() {
                   setNewTitle("");
                   setNewUrl("");
                 }}
-                className="py-2 px-4 rounded-lg cursor-pointer text-sm font-semibold border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+                className="py-2.5 px-4.5 rounded-xl cursor-pointer text-xs font-bold border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 bg-white dark:bg-zinc-950 active:scale-95"
               >
                 취소
               </Button>
               <Button
                 type="submit"
                 disabled={addLoading}
-                className="py-2 px-4 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors rounded-lg flex items-center justify-center gap-2 cursor-pointer font-semibold text-sm"
+                className="py-2.5 px-4.5 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors rounded-xl flex items-center justify-center gap-2 cursor-pointer font-bold text-xs active:scale-95 shadow-sm"
               >
                 {addLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <Plus className="h-4 w-4" />
+                  <Plus className="h-3.5 w-3.5" />
                 )}
-                <span>링크 추가</span>
+                <span>링크 등록</span>
               </Button>
             </div>
           </form>
         </Dialog>
 
         {/* Links List */}
-        <section className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
-          <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3 mb-6">
+        <section className="bg-white/50 dark:bg-zinc-900/40 backdrop-blur-xl border border-zinc-200/60 dark:border-zinc-800/80 rounded-2xl p-6.5 shadow-premium">
+          <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-4 mb-6">
             <div className="flex items-center gap-3">
-              <h2 className="text-lg font-bold tracking-tight">내 링크 목록 ({links.length})</h2>
-              <span className="hidden md:inline text-xs text-zinc-400">항목을 클릭해서 바로 수정하세요.</span>
+              <h2 className="text-base font-extrabold tracking-tight">내 링크 리스트 ({links.length})</h2>
+              <span className="hidden md:inline text-[11px] text-zinc-400">제목/주소를 클릭해 즉시 편집 가능</span>
             </div>
             <Button
               onClick={() => setIsAddDialogOpen(true)}
-              className="py-1.5 px-3 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold text-xs h-8"
+              className="py-2 px-3.5 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-all rounded-xl flex items-center gap-1.5 cursor-pointer font-bold text-xs h-8.5 active:scale-95 shadow-sm"
             >
               <Plus className="h-3.5 w-3.5" />
               <span>새 링크 추가</span>
@@ -618,32 +642,32 @@ export default function AdminPage() {
           </div>
 
           {links.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 text-center">
-              <Link2 className="h-8 w-8 text-zinc-300 dark:text-zinc-700 mb-3" />
-              <p className="text-sm font-semibold text-zinc-400">등록된 링크가 없습니다.</p>
-              <p className="text-xs text-zinc-400 mt-1">위 폼을 사용하여 링크를 추가해보세요.</p>
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Link2 className="h-9 w-9 text-zinc-300 dark:text-zinc-700 mb-3" />
+              <p className="text-xs font-bold text-zinc-400">등록된 링크가 아직 없네요.</p>
+              <p className="text-[11px] text-zinc-400 mt-1">상단의 새 링크 추가 버튼을 통해 경로를 연동해보세요.</p>
             </div>
           ) : (
             <div className="flex flex-col gap-3">
               {links.map((link) => (
                 <div
                   key={link.id}
-                  className="flex items-center justify-between p-4 rounded-xl border border-zinc-200/80 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/20 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300 gap-4"
+                  className="flex items-center justify-between p-4 rounded-2xl border border-zinc-200/50 dark:border-zinc-800/60 bg-white dark:bg-zinc-950/40 hover:border-zinc-300 dark:hover:border-zinc-700 hover:shadow-premium transition-all duration-300 gap-4"
                 >
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     {/* Google Favicon API */}
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 overflow-hidden">
                       {getFaviconUrl(link.url) ? (
                         <img
                           src={getFaviconUrl(link.url)}
-                          alt="favicon"
+                          alt=""
                           onError={(e) => {
                             (e.target as HTMLElement).style.display = "none";
                           }}
                           className="h-5 w-5 object-contain"
                         />
                       ) : (
-                        <Link2 className="h-4 w-4 text-zinc-400" />
+                        <Link2 className="h-4.5 w-4.5 text-zinc-400" />
                       )}
                     </div>
 
@@ -652,9 +676,9 @@ export default function AdminPage() {
                       <InlineEdit
                         value={link.title}
                         onSave={(val) => handleUpdateLink(link.id, "title", val)}
-                        validate={(val) => (!val ? "제목은 필수입니다." : null)}
-                        placeholder="링크 제목"
-                        className="text-sm font-bold truncate max-w-full hover:bg-zinc-100 dark:hover:bg-zinc-800 px-1 py-0.5 rounded cursor-pointer"
+                        validate={(val) => (!val ? "링크명은 비어둘 수 없습니다." : null)}
+                        placeholder="링크 이름"
+                        className="text-sm font-bold truncate max-w-full hover:bg-zinc-100/50 dark:hover:bg-zinc-900/50 px-1 py-0.5 rounded-lg cursor-pointer"
                       />
                       {/* Inline Edit URL */}
                       <InlineEdit
@@ -662,21 +686,21 @@ export default function AdminPage() {
                         onSave={(val) => handleUpdateLink(link.id, "url", val)}
                         validate={validateUrl}
                         placeholder="https://..."
-                        className="text-xs text-zinc-500 truncate max-w-full hover:bg-zinc-100 dark:hover:bg-zinc-800 px-1 py-0.5 rounded cursor-pointer font-mono"
+                        className="text-xs text-zinc-500 truncate max-w-full hover:bg-zinc-100/50 dark:hover:bg-zinc-900/50 px-1 py-0.5 rounded-lg cursor-pointer font-mono"
                       />
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 shrink-0">
+                  <div className="flex items-center gap-3.5 shrink-0">
                     {/* Click Stats Badge */}
-                    <div className="flex flex-col items-center justify-center px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 text-xs font-semibold border border-zinc-200 dark:border-zinc-700">
-                      <span className="text-[10px] font-normal text-zinc-400 leading-none mb-0.5">Hits</span>
+                    <div className="flex flex-col items-center justify-center px-3.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 text-xs font-extrabold border border-zinc-200/50 dark:border-zinc-800">
+                      <span className="text-[9px] font-bold text-zinc-400/80 uppercase tracking-wide leading-none mb-0.5">Hits</span>
                       <span className="leading-none">{link.clickCount || 0}</span>
                     </div>
 
                     <button
                       onClick={() => handleDeleteLink(link.id)}
-                      className="p-2 rounded-lg text-zinc-400 hover:text-red-500 hover:bg-red-50/50 dark:hover:bg-red-950/20 transition-all cursor-pointer"
+                      className="p-2 rounded-xl text-zinc-400 hover:text-red-500 hover:bg-red-50/50 dark:hover:bg-red-950/20 transition-all cursor-pointer active:scale-90"
                       title="삭제"
                     >
                       <Trash2 className="h-4 w-4" />
