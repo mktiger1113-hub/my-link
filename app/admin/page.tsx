@@ -15,6 +15,7 @@ import {
   UserLink,
 } from "@/lib/db";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import {
   Link2,
   ExternalLink,
@@ -156,6 +157,7 @@ export default function AdminPage() {
   const [newUrl, setNewUrl] = useState("");
   const [addError, setAddError] = useState<string | null>(null);
   const [addLoading, setAddLoading] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   // Profile ID (displayName) Edit state with live validation
   const [idEditing, setIdEditing] = useState(false);
@@ -332,6 +334,7 @@ export default function AdminPage() {
       setLinks((prev) => [added, ...prev]);
       setNewTitle("");
       setNewUrl("");
+      setIsAddDialogOpen(false);
     } catch (err) {
       setAddError("링크 추가에 실패했습니다.");
     } finally {
@@ -527,35 +530,38 @@ export default function AdminPage() {
           </div>
         </section>
 
-        {/* Link Add Form */}
-        <section className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
-          <h2 className="text-lg font-bold mb-6 tracking-tight flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            새 링크 추가
-          </h2>
-
+        {/* Link Add Form Dialog */}
+        <Dialog
+          isOpen={isAddDialogOpen}
+          onClose={() => {
+            setIsAddDialogOpen(false);
+            setAddError(null);
+            setNewTitle("");
+            setNewUrl("");
+          }}
+          title="새 링크 추가"
+        >
           <form onSubmit={handleAddLink} className="flex flex-col gap-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">링크 제목</label>
-                <input
-                  type="text"
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder="예: 깃허브 저장소, 개인 블로그"
-                  className="px-3 py-2 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50"
-                />
-              </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">링크 제목</label>
+              <input
+                type="text"
+                value={newTitle}
+                onChange={(e) => setNewTitle(e.target.value)}
+                placeholder="예: 깃허브 저장소, 개인 블로그"
+                className="px-3 py-2 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 text-zinc-900 dark:text-zinc-50"
+              />
+            </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">URL 주소</label>
-                <input
-                  type="text"
-                  value={newUrl}
-                  onChange={(e) => setNewUrl(e.target.value)}
-                  placeholder="https://example.com"
-                  className="px-3 py-2 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50"
-                />
-              </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">URL 주소</label>
+              <input
+                type="text"
+                value={newUrl}
+                onChange={(e) => setNewUrl(e.target.value)}
+                placeholder="https://example.com"
+                className="px-3 py-2 text-sm bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-zinc-950 dark:focus:ring-zinc-50 text-zinc-900 dark:text-zinc-50"
+              />
             </div>
 
             {addError && (
@@ -565,26 +571,50 @@ export default function AdminPage() {
               </p>
             )}
 
-            <Button
-              type="submit"
-              disabled={addLoading}
-              className="mt-2 w-full md:w-auto self-end py-2 px-5 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors rounded-lg flex items-center justify-center gap-2 cursor-pointer font-semibold text-sm"
-            >
-              {addLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                <Plus className="h-4 w-4" />
-              )}
-              <span>링크 추가</span>
-            </Button>
+            <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setIsAddDialogOpen(false);
+                  setAddError(null);
+                  setNewTitle("");
+                  setNewUrl("");
+                }}
+                className="py-2 px-4 rounded-lg cursor-pointer text-sm font-semibold border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+              >
+                취소
+              </Button>
+              <Button
+                type="submit"
+                disabled={addLoading}
+                className="py-2 px-4 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors rounded-lg flex items-center justify-center gap-2 cursor-pointer font-semibold text-sm"
+              >
+                {addLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Plus className="h-4 w-4" />
+                )}
+                <span>링크 추가</span>
+              </Button>
+            </div>
           </form>
-        </section>
+        </Dialog>
 
         {/* Links List */}
         <section className="bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3 mb-6">
-            <h2 className="text-lg font-bold tracking-tight">내 링크 목록 ({links.length})</h2>
-            <span className="text-xs text-zinc-400">항목을 클릭해서 바로 수정하세요.</span>
+            <div className="flex items-center gap-3">
+              <h2 className="text-lg font-bold tracking-tight">내 링크 목록 ({links.length})</h2>
+              <span className="hidden md:inline text-xs text-zinc-400">항목을 클릭해서 바로 수정하세요.</span>
+            </div>
+            <Button
+              onClick={() => setIsAddDialogOpen(true)}
+              className="py-1.5 px-3 bg-zinc-950 text-zinc-50 hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200 transition-colors rounded-lg flex items-center gap-1.5 cursor-pointer font-semibold text-xs h-8"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              <span>새 링크 추가</span>
+            </Button>
           </div>
 
           {links.length === 0 ? (
