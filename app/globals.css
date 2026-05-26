@@ -127,3 +127,20 @@
     @apply font-sans;
     }
 }
+
+@utility shadow-premium {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.025);
+}
+
+@utility shadow-premium-hover {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+  & .shadow-premium {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+  & .shadow-premium-hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  }
+}
